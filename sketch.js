@@ -1,5 +1,5 @@
 let SERVER_ADDRESS = "http://192.168.1.174/data";
-let interval = 5000; // 请求数据的时间间隔（毫秒）
+let interval = 0; // 请求数据的时间间隔（毫秒）
 
 let colors = {
   bg: [0, 0, 0, 60],
@@ -11,7 +11,10 @@ let colors = {
 };
 
 let maxVx = 1;
-let g = 0.04;
+let g = 0.04; 
+
+let APDS9960_LEFT = 3;
+let APDS9960_RIGHT = 4;
 
 class Particle {
   constructor(x, y, color, size, vx, vy, life) {
@@ -86,6 +89,7 @@ class FireWorkBall extends Particle {
 let particles = [];
 let fireworks = [];
 
+
 function parseData(res) {
   console.log("Received data:", res);
   let data = res.data;
@@ -101,15 +105,22 @@ function parseData(res) {
     // B 最大
     colors.fireworks = ["#bcc6e6", "#96a8e2", "#bbfefe"];
   }
+
+  if (data.gesture) {
+    let gesture = data.gesture;
+
+      triggerFirework(gesture);
+  }
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   setInterval(requestData, interval); // 每隔一定时间请求数据
+  noStroke();
 }
 
 function draw() {
-  background(0,0,0,60); // 使用固定的黑色背景
+  background(...colors.bg); // 使用固定的黑色背景
 
   for (const particle of particles) {
     particle.draw();
@@ -132,8 +143,15 @@ function requestData() {
   });
 }
 
-function mousePressed() {
-  let distanceToCenter = mouseX - windowWidth / 2;
+function triggerFirework(direction) {
+  // 计算爆炸高度（稍低于屏幕顶部）
+  let distanceToCenter;
+  if(direction === APDS9960_LEFT){
+   distanceToCenter = (windowWidth * 0.25) - (windowWidth / 2);
+  } 
+  if(direction === APDS9960_RIGHT){
+     distanceToCenter = (windowWidth * 0.75) - (windowWidth / 2);
+  }
   let vx = distanceToCenter / windowWidth * maxVx * 6;
 
   fireworks.push(new FireWorkBall(

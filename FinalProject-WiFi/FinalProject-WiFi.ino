@@ -24,11 +24,18 @@ void handleData() {
   data["green"] = storedGreen;
   data["blue"] = storedBlue;
 
+  // 添加手势数据
+  if (gestureMode && apds.gestureValid()) {
+    uint8_t gesture = apds.readGesture();
+    data["gesture"] = gesture; // 将手势作为数据发送
+  }
+
   String resTxt = "";
   serializeJson(resJson, resTxt);
-server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.sendHeader("Access-Control-Allow-Origin", "*");
   server.send(200, "application/json", resTxt);
 }
+
 
 void setup() {
   Serial.begin(115200);
