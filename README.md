@@ -13,6 +13,11 @@
 I used the Adafruit_APDS9960 library in arduino to get better use of the APDS9960's color recognition and gesture recognition.
 
 # Description of any sensor, output component or mechanism that you are planning on using or building
+The APDS9960 needed to be soldered to the row of pins, and I first went to school to solder for the sensor
+![GSPo32.png](https://imgpile.com/images/GSPo32.png)
+![GSP25G.png](https://imgpile.com/images/GSP25G.png)
+
+
 Compared to last week, I added a new button to the arduino section. Because the APDS9960 sensor will stay motionless to record the color information, you need to let it determine a value, so pressing the button when you have determined the color information will immediately record the color at that point and turn on the gesture recognition mode.
 ![GSKUoS.jpg](https://imgpile.com/images/GSKUoS.jpg)
 
