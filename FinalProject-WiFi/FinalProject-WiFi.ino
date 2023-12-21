@@ -6,8 +6,8 @@
 
 Adafruit_APDS9960 apds;
 
-const char* SSID = "Verizon_R3S4K9";
-const char* SSID_PASSWORD = "churn6-boa-hale";
+const char* SSID = "Evelyn";
+const char* SSID_PASSWORD = "yyyyyyyy";
 const int buttonPinD3 = 3;
 const int debounceDelay = 50; // 按钮去抖动延时（毫秒）
 

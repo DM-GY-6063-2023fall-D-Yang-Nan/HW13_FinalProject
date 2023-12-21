@@ -1,5 +1,5 @@
-let SERVER_ADDRESS = "http://192.168.1.174/data";
-let interval = 0; // 请求数据的时间间隔（毫秒）
+let SERVER_ADDRESS = "http://10.10.81.104/data";
+let interval = 0; 
 
 let colors = {
   bg: [0, 0, 0, 60],
@@ -9,6 +9,8 @@ let colors = {
       "#bbfefe",
   ]
 };
+
+let stars = [];
 
 let maxVx = 1;
 let g = 0.04; 
@@ -71,7 +73,7 @@ class FireWorkBall extends Particle {
   explode() {
       for (let i = 0; i < 200; i++) {
           const vec = p5.Vector.random2D().mult(random(2, 5));
-          const color = colors.fireworks[i % 3]; // 交替选择两种颜色
+          const color = colors.fireworks[i % 3]; // color
           particles.push(new Particle(
               this.x,
               this.y,
@@ -94,15 +96,15 @@ function parseData(res) {
   console.log("Received data:", res);
   let data = res.data;
 
-  // 根据检测到的最大颜色值更新烟花颜色
+  // Update firework colors based on the maximum color value detected
   if (data.red > data.green && data.red > data.blue) {
-    // R 最大
+    // R 
     colors.fireworks = ["#fed3de", "#de8696", "#9a203d"];
   } else if (data.green > data.red && data.green > data.blue) {
-    // G 最大
+    // G 
     colors.fireworks = ["#c0e891", "#008d5c", "#a0ad5d"];
   } else if (data.blue > data.red && data.blue > data.green) {
-    // B 最大
+    // B 
     colors.fireworks = ["#bcc6e6", "#96a8e2", "#bbfefe"];
   }
 
@@ -115,12 +117,19 @@ function parseData(res) {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  setInterval(requestData, interval); // 每隔一定时间请求数据
+  setInterval(requestData, interval); 
   noStroke();
+
+  for (let i = 0; i < 200; i++) {
+    let x = random(width);
+    let y = random(height);
+    let star_size = random(1, 3);
+    stars.push(new Star(x, y, star_size));
+  }// stars
 }
 
 function draw() {
-  background(...colors.bg); // 使用固定的黑色背景
+  background(...colors.bg); 
 
   for (const particle of particles) {
     particle.draw();
@@ -133,6 +142,11 @@ for (const firework of fireworks) {
 
 particles = particles.filter(p => p.active);
 fireworks = fireworks.filter(f => f.active);
+
+for (let star of stars) {
+  star.twinkle();
+  star.display();
+}//star
 }
 
 function requestData() {
@@ -143,8 +157,27 @@ function requestData() {
   });
 }
 
+class Star {
+  constructor(x, y, size) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.alpha = random(200, 255);
+  }
+
+  twinkle() {
+    if (random(1) < 0.5) {
+      this.alpha = random(200, 255);
+    }
+  }
+
+  display() {
+    fill(255, this.alpha);
+    ellipse(this.x, this.y, this.size, this.size);
+  }
+}
+
 function triggerFirework(direction) {
-  // 计算爆炸高度（稍低于屏幕顶部）
   let distanceToCenter;
   if(direction === APDS9960_LEFT){
    distanceToCenter = (windowWidth * 0.25) - (windowWidth / 2);
